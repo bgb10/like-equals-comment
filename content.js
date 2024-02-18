@@ -1,5 +1,8 @@
 const like = document.querySelector('div[data-testid="like"]')
 
+const storedText = localStorage.getItem('savedText')
+console.log(storedText)
+
 if (like) {
   like.addEventListener('click', (e) => {
     if (like.getAttribute('active') == 'true') return

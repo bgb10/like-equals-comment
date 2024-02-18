@@ -3,6 +3,7 @@
   "description": "Change your like to comment and vice versa!",
   "version": "1.0",
   "manifest_version": 3,
+  "permissions": ["storage"],
   "action": {
     "default_popup": "hello.html",
     "default_icon": "hello_extensions.png"
