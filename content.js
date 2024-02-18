@@ -1,20 +1,23 @@
-const like = document.querySelector('div[data-testid="like"]')
+;(async () => {
+  const like = document.querySelector('div[data-testid="like"]')
 
-const storedText = localStorage.getItem('savedText')
-console.log(storedText)
+  if (like) {
+    like.addEventListener('click', async (e) => {
+      if (like.getAttribute('active') == 'true') return
 
-if (like) {
-  like.addEventListener('click', (e) => {
-    if (like.getAttribute('active') == 'true') return
+      let textArea = document.querySelector(
+        '#root > div.sc-dPiLbb.sc-bBHHxi.kTIDXm > div.sc-TBWPX.dXONqK.sc-brSvTw.cgYvDI > div > div.sc-evcjhq.BdYrx > textarea'
+      )
+      textArea.focus()
 
-    let textArea = document.querySelector(
-      '#root > div.sc-dPiLbb.sc-bBHHxi.kTIDXm > div.sc-TBWPX.dXONqK.sc-brSvTw.cgYvDI > div > div.sc-evcjhq.BdYrx > textarea'
-    )
-    textArea.focus()
-    document.execCommand('insertText', false, 'textArea')
-    let submitButton = document.querySelector(
-      '#root > div.sc-dPiLbb.sc-bBHHxi.kTIDXm > div.sc-TBWPX.dXONqK.sc-brSvTw.cgYvDI > div > div.sc-evcjhq.BdYrx > div > button'
-    )
-    submitButton.click()
-  })
-}
+      // WARNING: non blocking function!
+      const { comment } = await chrome.storage.local.get(['comment'])
+
+      document.execCommand('insertText', false, comment)
+      let submitButton = document.querySelector(
+        '#root > div.sc-dPiLbb.sc-bBHHxi.kTIDXm > div.sc-TBWPX.dXONqK.sc-brSvTw.cgYvDI > div > div.sc-evcjhq.BdYrx > div > button'
+      )
+      submitButton.click()
+    })
+  }
+})()

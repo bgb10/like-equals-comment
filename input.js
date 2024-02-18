@@ -1,21 +1,22 @@
 const textInput = document.getElementById('textInput')
-const storedText = localStorage.getItem('savedText')
-if (storedText) {
-  textInput.value = storedText
+
+if (textInput) {
+  chrome.storage.local.get(['comment'], ({ comment }) => {
+    textInput.value = comment
+  })
 }
 
 const saveBtn = document.getElementById('saveBtn')
 
 saveBtn.addEventListener('click', function () {
   // Getting the value of the input field
-  const textValue = textInput.value
+  const comment = textInput.value
 
-  // Checking if textValue is not empty
-  if (textValue.trim() !== '') {
-    // Storing the value in localStorage with a key 'savedText'
-    localStorage.setItem('savedText', textValue)
-    alert('Text saved successfully!')
+  // Checking if input is not empty
+  if (comment.trim() !== '') {
+    chrome.storage.local.set({ comment })
+    console.log('saved')
   } else {
-    alert('Please enter some text to save.')
+    console.log('empty')
   }
 })
