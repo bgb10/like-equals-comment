@@ -1,6 +1,6 @@
 {
-  "name": "Like=Comment",
-  "description": "Change your like to comment and vice versa!",
+  "name": "Like = Comment",
+  "description": "Change your Like to Comment and vice versa!",
   "version": "1.0",
   "manifest_version": 3,
   "permissions": ["storage"],
