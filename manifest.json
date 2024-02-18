@@ -10,8 +10,12 @@
   },
   "content_scripts": [
     {
-      "js": ["content.js"],
+      "js": ["hooks/velog.js"],
       "matches": ["https://velog.io/@*"]
+    },
+    {
+      "js": ["hooks/youtube.js"],
+      "matches": ["https://www.youtube.com/watch?*"]
     }
   ]
 }
