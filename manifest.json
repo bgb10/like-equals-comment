@@ -11,7 +11,12 @@
   "content_scripts": [
     {
       "js": ["hooks/velog.js"],
-      "matches": ["https://velog.io/@*"]
+      "matches": ["https://velog.io/@*"],
+      "exclude_matches": [
+        "https://velog.io/@*/posts",
+        "https://velog.io/@*/series",
+        "https://velog.io/@*/about"
+      ]
     },
     {
       "js": ["hooks/youtube.js"],
