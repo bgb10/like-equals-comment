@@ -1,29 +1,86 @@
-;(async () => {
-  setTimeout(async () => {
-    let like = document.querySelector(
-      '#top-level-buttons-computed > segmented-like-dislike-button-view-model > yt-smartimation > div > div > like-button-view-model'
-    )
+let like = document.querySelector('like-button-view-model.YtLikeButtonViewModelHost')
+let placeholderArea = document.querySelector('#placeholder-area')
 
-    console.log(like)
+function runIfExists() {
+  let submitButton = document.querySelector('#submit-button > yt-button-shape > button')
 
-    if (like) {
-      like.addEventListener('click', async (e) => {
-        // if (like.getAttribute('active') == 'true') return
+  if (submitButton && !submitButton.disabled) {
+    submitButton.click()
+  } else {
+    let cb = function (mutationsList, observer) {
+      let submitButton = document.querySelector('#submit-button > yt-button-shape > button')
 
-        document.querySelector('#placeholder-area').click()
+      if (submitButton && !submitButton.disabled) {
+        submitButton.click()
 
-        let textArea = document.querySelector('#contenteditable-root')
-        textArea.focus()
-
-        // WARNING: non blocking function!
-        const { comment } = await chrome.storage.local.get(['comment'])
-        document.execCommand('insertText', false, comment)
-
-        setTimeout(() => {
-          let submitButton = document.querySelector('#submit-button > yt-button-shape > button')
-          submitButton.click()
-        }, 200)
-      })
+        observer.disconnect()
+      }
     }
-  }, 300)
-})()
+    let a = document.querySelector('ytd-app')
+    let config = { childList: true, subtree: true }
+    let observer = new MutationObserver(cb)
+    observer.observe(a, config)
+  }
+}
+
+function addComment(placeholder) {
+  console.log('add comment')
+
+  placeholder.click()
+  let textArea = document.querySelector('#contenteditable-root')
+  textArea.focus()
+
+  const { comment } = { comment: 'test' }
+  document.execCommand('insertText', false, comment)
+
+  runIfExists()
+}
+
+function onLike() {
+  let placeholder = document.querySelector('#placeholder-area')
+  if (placeholder) {
+    addComment(placeholder)
+    return
+  }
+
+  let a = document.querySelector('ytd-app')
+  let config = { childList: true, subtree: true }
+  let cb = function (mutationsList, observer) {
+    const placeholder = document.getElementById('placeholder-area')
+
+    if (placeholder) {
+      addComment(placeholder)
+
+      observer.disconnect()
+    }
+  }
+  let observer = new MutationObserver(cb)
+  observer.observe(a, config)
+}
+
+if (!like) {
+  let a = document.querySelector('ytd-app')
+  let config = { childList: true, subtree: true }
+  let cb = function (mutationsList, observer) {
+    for (let mutation of mutationsList) {
+      if (mutation.type === 'childList') {
+        // Check if a <ytd-comments> element is added as a descendant
+        if (mutation.addedNodes) {
+          mutation.addedNodes.forEach((node) => {
+            if (
+              node.nodeName.toLowerCase() === 'like-button-view-model' &&
+              node.classList.contains('YtLikeButtonViewModelHost')
+            ) {
+              console.log('A <like-button-view-model> element was added:', node)
+              like = node
+              // add eventlistener
+              like.addEventListener('click', onLike)
+            }
+          })
+        }
+      }
+    }
+  }
+  let observer = new MutationObserver(cb)
+  observer.observe(a, config)
+}
