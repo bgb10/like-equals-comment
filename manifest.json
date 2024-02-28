@@ -3,7 +3,8 @@
   "description": "Change your Like to Comment and vice versa!",
   "version": "1.0",
   "manifest_version": 3,
-  "permissions": ["storage", "activeTab"],
+  "permissions": ["storage", "activeTab", "webNavigation", "scripting"],
+  "host_permissions": ["<all_urls>"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon.png"
@@ -11,7 +12,7 @@
   "content_scripts": [
     {
       "js": ["hooks/velog.js"],
-      "matches": ["https://velog.io/@*"],
+      "matches": ["https://www.velog.io/@*"],
       "exclude_matches": [
         "https://velog.io/@*/posts",
         "https://velog.io/@*/series",
@@ -20,7 +21,19 @@
     },
     {
       "js": ["hooks/youtube.js"],
-      "matches": ["https://www.youtube.com/watch?*"]
+      "matches": ["https://www.youtube.com/watch?v=*"]
     }
-  ]
+  ],
+  "background": {
+    "service_worker": "service_worker.js"
+  },
+  "commands": {
+    "like-equals-comment": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E",
+        "mac": "Command+Shift+E"
+      },
+      "description": "Add like and comment on the page"
+    }
+  }
 }

@@ -1,77 +1,45 @@
-let like = document.querySelector('like-button-view-model.YtLikeButtonViewModelHost')
+function comment() {}
 
-function runIfExists() {
-  alert('run if exists')
+function like() {
+  const like = document.querySelector(
+    '#top-level-buttons-computed > segmented-like-dislike-button-view-model > yt-smartimation > div > div > like-button-view-model > toggle-button-view-model > button-view-model > button'
+  )
+  console.log(like)
+  like.click()
+}
 
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  console.log(sender.tab ? 'from a content script:' + sender.tab.url : 'from the extension')
+  if (request.greeting === 'hello') sendResponse({ farewell: 'goodbye' })
+
+  like()
+
+  window.scrollTo(0, 9999)
+
+  setTimeout(comment, 1000)
+})
+
+function submit() {
   let submitButton = document.querySelector('#submit-button > yt-button-shape > button')
 
   if (submitButton && !submitButton.disabled) {
     submitButton.click()
-  } else {
-    let a = document.querySelector('ytd-app')
-    let config = { childList: true, subtree: true }
-    let cb = function (mutationsList, observer) {
-      let submitButton = document.querySelector('#submit-button > yt-button-shape > button')
-
-      if (submitButton && !submitButton.disabled) {
-        submitButton.click()
-
-        observer.disconnect()
-      }
-    }
-    let observer = new MutationObserver(cb)
-    observer.observe(a, config)
   }
 }
 
-function addComment(placeholder) {
-  alert('addcomment')
-
-  placeholder.click()
-  let textArea = document.querySelector('#contenteditable-root')
-  textArea.focus()
-
-  const { comment } = { comment: 'test' }
-  document.execCommand('insertText', false, comment)
-
-  runIfExists()
-}
-
-function onLike() {
-  alert('onlike')
-
+function comment() {
   let placeholder = document.querySelector('#placeholder-area')
+
   if (placeholder) {
-    addComment(placeholder)
+    placeholder.click()
+    let textArea = document.querySelector('#contenteditable-root')
+    textArea.focus()
+
+    const { comment } = { comment: 'thank you for good video!' }
+    document.execCommand('insertText', false, comment)
+
+    setTimeout(submit, 200)
   } else {
-    let a = document.querySelector('ytd-app')
-    let config = { childList: true, subtree: true }
-    let cb = function (mutationsList, observer) {
-      const placeholder = document.getElementById('placeholder-area')
-
-      if (placeholder) {
-        addComment(placeholder)
-
-        observer.disconnect()
-      }
-    }
-    let observer = new MutationObserver(cb)
-    observer.observe(a, config)
+    alert('no exists!')
   }
-}
-
-if (!like) {
-  let a = document.querySelector('ytd-app')
-  let config = { childList: true, subtree: true }
-  let cb = function (mutationsList, observer) {
-    like = document.querySelector('like-button-view-model.YtLikeButtonViewModelHost')
-
-    if (like) {
-      like.addEventListener('click', onLike)
-
-      observer.disconnect()
-    }
-  }
-  let observer = new MutationObserver(cb)
-  observer.observe(a, config)
 }
